@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WUT.Zad1.Console", "WUT.Zad1.Console\WUT.Zad1.Console.csproj", "{6C2A0090-0765-4F79-A634-021670624A66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C2A0090-0765-4F79-A634-021670624A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C2A0090-0765-4F79-A634-021670624A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C2A0090-0765-4F79-A634-021670624A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C2A0090-0765-4F79-A634-021670624A66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8C3CC2A-AED9-4307-946C-0D2ED2815EC7}
+	EndGlobalSection
+EndGlobal
