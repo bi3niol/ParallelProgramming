@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WUT.Zad1.Lib\WUT.Zad1.Lib.csproj">
+      <Project>{DA30B5D2-2ABF-4A1B-AC9A-0A8067DEC054}</Project>
+      <Name>WUT.Zad1.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

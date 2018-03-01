@@ -41,10 +41,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alchemist.cs" />
+    <Compile Include="Alchemists\A_Alchemist.cs" />
+    <Compile Include="Alchemists\B_Alchemist.cs" />
+    <Compile Include="Alchemists\C_Alchemist.cs" />
+    <Compile Include="Alchemists\D_Alchemist.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="ITask.cs" />
+    <Compile Include="LibSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LibSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ResourceTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storehouse.cs" />
     <Compile Include="Tasks\GetResourcesTask.cs" />
+    <Compile Include="Wizard.cs" />
+    <Compile Include="Wizards\EvilWizard.cs" />
+    <Compile Include="Wizards\GoodWizard.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="LibSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LibSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

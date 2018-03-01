@@ -11,10 +11,12 @@ namespace WUT.Zad1.Lib.Tasks
     {
         private Semaphore semaphore;
         private ResourceTypes needResources;
-        public GetResourcesTask(Semaphore _semaphore, ResourceTypes _needResources)
+        private object Owner;
+        public GetResourcesTask(object owner,Semaphore _semaphore, ResourceTypes _needResources)
         {
             semaphore = _semaphore;
             needResources = _needResources;
+            Owner = owner;
         }
 
         public int Piority { get; set; }
@@ -24,9 +26,11 @@ namespace WUT.Zad1.Lib.Tasks
             return (availableResources & needResources) == needResources;
         }
 
-        public void Execute()
+        public ResourceTypes Execute()
         {
+            Console.WriteLine($"{Owner} : resources are available. Take resources : {needResources}");
             semaphore.Release();
+            return needResources;
         }
     }
 }

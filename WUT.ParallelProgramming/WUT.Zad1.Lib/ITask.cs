@@ -10,6 +10,6 @@ namespace WUT.Zad1.Lib
     {
         int Piority { get; }
         bool CanExecute(ResourceTypes availableResources);
-        void Execute();
+        ResourceTypes Execute();
     }
 }

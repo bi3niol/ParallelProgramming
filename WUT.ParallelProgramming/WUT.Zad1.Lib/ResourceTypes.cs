@@ -9,6 +9,7 @@ namespace WUT.Zad1.Lib
     [Flags]
     public enum ResourceTypes
     {
+        None=0,
         Pb = 1,
         S = 2,
         Hg = 4,

@@ -18,7 +18,11 @@ namespace WUT.Zad1.Lib
 
         public void Run()
         {
-
+            Console.WriteLine($"{this.ToString()} Started...");
+            Console.WriteLine($"{this.ToString()} waitting for resources {needResources}...");
+            Storehouse.AddTask(new Tasks.GetResourcesTask(this, getResourceSem, needResources));
+            getResourceSem.WaitOne();
+            Console.WriteLine($"{this.ToString()} Back to labolatory...");
         }
     }
 }
