@@ -19,22 +19,27 @@ namespace WUT.Zad1.Lib
         private Semaphore charmsSem = new Semaphore(1,1);
         private Semaphore productionSem;
 
+        private bool Running = true;
         private Random random = new Random(Guid.NewGuid().GetHashCode());
 
+        public void Stop()
+        {
+            Running = false;
+        }
         public void AddCharm()
         {
-            Console.WriteLine($"New Charm added to {Name} Factory");
             charmsSem.WaitOne();
             charmsCount++;
+            Console.WriteLine($"New Charm added to {Name} Factory");
             Console.WriteLine(this);
             charmsSem.Release();
         }
 
         public void RemoveCharm()
         {
-            Console.WriteLine($"One Charm removed from {Name} Factory");
             charmsSem.WaitOne();
             charmsCount=Math.Max(0,charmsCount-1);
+            Console.WriteLine($"One Charm removed from {Name} Factory");
             Console.WriteLine(this);
             charmsSem.Release();
         }
@@ -87,12 +92,19 @@ namespace WUT.Zad1.Lib
 
         public void Run()
         {
-            while (true)
+            Running = true;
+            Console.WriteLine($"{Name} Started");
+            bool wasOccupied = false;
+            while (Running)
             {
                 productionSem.WaitOne();
                 if (IsOccupied)
                 {
-                    Console.WriteLine($"Factory {Name} is Occupied by {charmsCount} charms");
+                    if (!wasOccupied)
+                    {
+                        Console.WriteLine($"Factory {Name} is Occupied by {charmsCount} charms");
+                        wasOccupied = true;
+                    }
                     productionSem.Release();
                 }
                 else
@@ -100,9 +112,11 @@ namespace WUT.Zad1.Lib
                     Console.WriteLine($"Factory {Name} is producing new resource");
                     Thread.Sleep(MinProdTime + random.Next() % Interval);
                     AddProduct();
+                    wasOccupied = false;
                 }
                 Thread.Sleep(0);
             }
+            Console.WriteLine($"{Name} End Work");
         }
         public override string ToString()
         {

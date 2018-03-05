@@ -14,14 +14,29 @@
     <Setting Name="PbProductionTime" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">200</Value>
     </Setting>
-    <Setting Name="HgProductionTime" Type="System.String" Scope="Application">
+    <Setting Name="HgProductionTime" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">300</Value>
     </Setting>
-    <Setting Name="SProductionTime" Type="System.String" Scope="Application">
+    <Setting Name="SProductionTime" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">150</Value>
     </Setting>
-    <Setting Name="ProductionInterval" Type="System.String" Scope="Application">
+    <Setting Name="ProductionInterval" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">150</Value>
+    </Setting>
+    <Setting Name="GoodWizardsCount" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="EvilWizardsCount" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="CastGoodCharmTime" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
+    <Setting Name="CastEvilCharmTime" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">200</Value>
+    </Setting>
+    <Setting Name="CharmInterval" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

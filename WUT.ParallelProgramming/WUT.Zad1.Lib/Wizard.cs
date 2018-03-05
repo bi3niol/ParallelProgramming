@@ -21,6 +21,12 @@ namespace WUT.Zad1.Lib
             MinCharmTime = minCharmTime;
             Interval = interval;
         }
+
+        public void Stop()
+        {
+            Working = false;
+        }
+
         public abstract void Run();
     }
 }

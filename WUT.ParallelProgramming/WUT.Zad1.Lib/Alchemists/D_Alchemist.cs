@@ -10,7 +10,7 @@ namespace WUT.Zad1.Lib.Alchemists
     {
         private static int ID_static = 1;
         private int Id;
-        protected override ResourceTypes needResources => ResourceTypes.Pb_S;
+        protected override ResourceTypes needResources => ResourceTypes.Pb_Hb_S;
         public D_Alchemist() : base()
         {
             Id = ID_static++;
