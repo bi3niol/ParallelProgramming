@@ -26,7 +26,6 @@ namespace WUT.Zad1.Console
             Start();
             System.Console.ReadLine();
             Stop();
-
             System.Console.ReadLine();
         }
         private static void Start()
@@ -76,6 +75,7 @@ namespace WUT.Zad1.Console
             var delta = LibSettings.Default.MaxAlchemistRespTime - LibSettings.Default.MinAlchemistRespTime;
             var minVal = LibSettings.Default.MinAlchemistRespTime;
             System.Console.WriteLine("Spammer Begin");
+            Alchemist alch = null;
             while (Working)
             {
                 var Alchemist = random.Next() % 4;
@@ -83,27 +83,32 @@ namespace WUT.Zad1.Console
                 {
                     case 0:
                         {
-                            new Thread(new A_Alchemist().Run).Start();
+                            alch = new A_Alchemist();
+                            StateLogger.SpawnedA++;
                             break;
                         }
                     case 1:
                         {
-                            new Thread(new B_Alchemist().Run).Start();
+                            alch = new B_Alchemist();
+                            StateLogger.SpawnedB++;
                             break;
                         }
                     case 2:
                         {
-                            new Thread(new C_Alchemist().Run).Start();
+                            alch = new C_Alchemist();
+                            StateLogger.SpawnedC++;
                             break;
                         }
                     case 3:
                         {
-                            new Thread(new D_Alchemist().Run).Start();
+                            alch = new D_Alchemist();
+                            StateLogger.SpawnedD++;
                             break;
                         }
                     default:
                         break;
                 }
+                new Thread(alch.Run).Start();
                 Thread.Sleep(minVal + random.Next() % delta);
             }
             System.Console.WriteLine("Spammer stop...");

@@ -28,7 +28,8 @@ namespace WUT.Zad1.Lib.Tasks
 
         public ResourceTypes Execute()
         {
-            Console.WriteLine($"{Owner} : resources are available. Take resources : {needResources}");
+            //Console.WriteLine($"{Owner} : resources are available. Take resources : {needResources}");
+            StateLogger.DrawState($"{Owner} : resources are available. Take resources : {needResources}");
             semaphore.Release();
             return needResources;
         }

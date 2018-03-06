@@ -27,7 +27,7 @@ namespace WUT.Zad1.Lib.Wizards
                 //Console.WriteLine($"{Name} : casts a charm to {factories[facId].Name}");
                 factories[facId].AddCharm();
                 // Console.WriteLine($"{Name} : Finished");
-                StateLogger.DrawState();
+                StateLogger.DrawState($"{Name} : casted a charm to {factories[facId].Name}");
             }
         }
     }

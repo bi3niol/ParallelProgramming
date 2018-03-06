@@ -29,7 +29,7 @@ namespace WUT.Zad1.Lib.Wizards
                     fac.RemoveCharm();
                 }
                 //Console.WriteLine($"{Name} : Finished");
-                StateLogger.DrawState();
+                StateLogger.DrawState($"{Name} : removed the charms");
 
             }
         }

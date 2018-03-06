@@ -116,7 +116,7 @@ namespace WUT.Zad1.Lib
                     StateLogger.DrawState($"Factory {Name} is producing new resource");
                     Thread.Sleep(MinProdTime + random.Next() % Interval);
                     AddProduct();
-                    StateLogger.DrawState();
+                    StateLogger.DrawState($"Factory {Name} is produced new resource");
                     wasOccupied = false;
                 }
                 Thread.Sleep(0);
