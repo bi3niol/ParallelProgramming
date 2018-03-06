@@ -15,8 +15,8 @@ namespace WUT.Zad1.Lib
 
         public string Name { get; private set; }
 
-        private Semaphore sizeSem = new Semaphore(1,1);
-        private Semaphore charmsSem = new Semaphore(1,1);
+        private Semaphore sizeSem = new Semaphore(1, 1);
+        private Semaphore charmsSem = new Semaphore(1, 1);
         private Semaphore productionSem;
 
         private bool Running = true;
@@ -30,17 +30,18 @@ namespace WUT.Zad1.Lib
         {
             charmsSem.WaitOne();
             charmsCount++;
-            Console.WriteLine($"New Charm added to {Name} Factory");
-            Console.WriteLine(this);
+           // Console.WriteLine($"New Charm added to {Name} Factory");
+            //Console.WriteLine(this);
             charmsSem.Release();
         }
+
 
         public void RemoveCharm()
         {
             charmsSem.WaitOne();
-            charmsCount=Math.Max(0,charmsCount-1);
-            Console.WriteLine($"One Charm removed from {Name} Factory");
-            Console.WriteLine(this);
+            charmsCount = Math.Max(0, charmsCount - 1);
+            //Console.WriteLine($"One Charm removed from {Name} Factory");
+            //Console.WriteLine(this);
             charmsSem.Release();
         }
 
@@ -48,7 +49,7 @@ namespace WUT.Zad1.Lib
         {
             sizeSem.WaitOne();
             var res = CurrSize == 0 ? 0 : 1;
-            if(CurrSize > 0)
+            if (CurrSize > 0)
             {
                 CurrSize = CurrSize - 1;
                 productionSem.Release();
@@ -69,8 +70,8 @@ namespace WUT.Zad1.Lib
         {
             sizeSem.WaitOne();
             CurrSize++;
-            Console.WriteLine($"Resource has been produced by Factory {Name}");
-            Console.WriteLine(this);
+            //Console.WriteLine($"Resource has been produced by Factory {Name}");
+            //Console.WriteLine(this);
             sizeSem.Release();
         }
         private bool IsOccupied
@@ -93,7 +94,8 @@ namespace WUT.Zad1.Lib
         public void Run()
         {
             Running = true;
-            Console.WriteLine($"{Name} Started");
+            //Console.WriteLine($"{Name} Started");
+            StateLogger.DrawState($"{Name} Started");
             bool wasOccupied = false;
             while (Running)
             {
@@ -102,25 +104,29 @@ namespace WUT.Zad1.Lib
                 {
                     if (!wasOccupied)
                     {
-                        Console.WriteLine($"Factory {Name} is Occupied by {charmsCount} charms");
+                        //Console.WriteLine($"Factory {Name} is Occupied by {charmsCount} charms");
+                        StateLogger.DrawState($"Factory {Name} is Occupied by {charmsCount} charms");
                         wasOccupied = true;
                     }
                     productionSem.Release();
                 }
                 else
                 {
-                    Console.WriteLine($"Factory {Name} is producing new resource");
+                    //Console.WriteLine($"Factory {Name} is producing new resource");
+                    StateLogger.DrawState($"Factory {Name} is producing new resource");
                     Thread.Sleep(MinProdTime + random.Next() % Interval);
                     AddProduct();
+                    StateLogger.DrawState();
                     wasOccupied = false;
                 }
                 Thread.Sleep(0);
             }
-            Console.WriteLine($"{Name} End Work");
+            //Console.WriteLine($"{Name} End Work");
+            StateLogger.DrawState($"{Name} End Work");
         }
         public override string ToString()
         {
-            return $"Factory {Name} : has {CurrSize} resources, is occupied by {charmsCount} charms";
+            return $"{Name} : has {CurrSize} resources, is occupied by {charmsCount} charms";
         }
     }
 }

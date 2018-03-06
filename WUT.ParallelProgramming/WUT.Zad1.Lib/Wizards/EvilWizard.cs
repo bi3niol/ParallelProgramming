@@ -24,9 +24,10 @@ namespace WUT.Zad1.Lib.Wizards
             {
                 Thread.Sleep(MinCharmTime + random.Next() % Interval);
                 int facId = random.Next() % factories.Length;
-                Console.WriteLine($"{Name} : casts a charm to {factories[facId].Name}");
+                //Console.WriteLine($"{Name} : casts a charm to {factories[facId].Name}");
                 factories[facId].AddCharm();
-                Console.WriteLine($"{Name} : Finished");
+                // Console.WriteLine($"{Name} : Finished");
+                StateLogger.DrawState();
             }
         }
     }

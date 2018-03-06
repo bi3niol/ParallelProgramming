@@ -57,7 +57,7 @@ namespace WUT.Zad1.Console
                 new Factory("S Factory",LibSettings.Default.SProductionTime,LibSettings.Default.ProductionInterval),
                 new Factory("Hg Factory",LibSettings.Default.HgProductionTime,LibSettings.Default.ProductionInterval)
             };
-
+            StateLogger.SetFactories(factories);
             Storehouse.Hg_Factory = factories[HgFacId];
             Storehouse.S_Factory = factories[SFacId];
             Storehouse.Pb_Factory = factories[PbFacId];
@@ -78,7 +78,6 @@ namespace WUT.Zad1.Console
             System.Console.WriteLine("Spammer Begin");
             while (Working)
             {
-                Thread.Sleep(minVal + random.Next() % delta);
                 var Alchemist = random.Next() % 4;
                 switch (Alchemist)
                 {
@@ -105,7 +104,7 @@ namespace WUT.Zad1.Console
                     default:
                         break;
                 }
-                Thread.Sleep(0);
+                Thread.Sleep(minVal + random.Next() % delta);
             }
             System.Console.WriteLine("Spammer stop...");
         }

@@ -31,6 +31,14 @@ namespace WUT.Zad1.Lib
             }
         }
 
+        public static int WaitingCount
+        {
+            get
+            {
+                return waittingTaskList.Count;
+            }
+        }
+
         public static void AddTask(ITask task)
         {
             taskListSem.WaitOne();
@@ -84,13 +92,17 @@ namespace WUT.Zad1.Lib
         {
             if ((resource & ResourceTypes.Pb) != 0)
                 if(Pb_Factory.GetProduct()==0)
-                    Console.WriteLine("GetProduct returned 0 !!!!...");
+                    //Console.WriteLine("GetProduct returned 0 !!!!...");
+                    StateLogger.DrawState("GetProduct returned 0 !!!!...");
+
             if ((resource & ResourceTypes.S) != 0)
                 if (S_Factory.GetProduct() == 0)
-                    Console.WriteLine("GetProduct returned 0 !!!!...");
+                    StateLogger.DrawState("GetProduct returned 0 !!!!...");
+            //Console.WriteLine("GetProduct returned 0 !!!!...");
             if ((resource & ResourceTypes.Hg) != 0)
                 if (Hg_Factory.GetProduct() == 0)
-                    Console.WriteLine("GetProduct returned 0 !!!!...");
+                    StateLogger.DrawState("GetProduct returned 0 !!!!...");
+            //Console.WriteLine("GetProduct returned 0 !!!!...");
             return true;
         }
 

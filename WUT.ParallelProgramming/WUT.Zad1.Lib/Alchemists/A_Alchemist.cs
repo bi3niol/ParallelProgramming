@@ -19,5 +19,10 @@ namespace WUT.Zad1.Lib.Alchemists
         {
             return "A_Alchemist "+Id;
         }
+        protected override void LogEndWork()
+        {
+            base.LogEndWork();
+            StateLogger.FinishA();
+        }
     }
 }

@@ -15,14 +15,16 @@ namespace WUT.Zad1.Lib
         {
             getResourceSem = new Semaphore(0, 1);
         }
-
+        protected virtual void LogEndWork() { }
         public void Run()
         {
-            Console.WriteLine($"{this.ToString()} Started...");
-            Console.WriteLine($"{this.ToString()} waitting for resources {needResources}...");
+            //Console.WriteLine($"{this.ToString()} Started...");
+            //Console.WriteLine($"{this.ToString()} waitting for resources {needResources}...");
             Storehouse.AddTask(new Tasks.GetResourcesTask(this, getResourceSem, needResources));
             getResourceSem.WaitOne();
-            Console.WriteLine($"{this.ToString()} Back to labolatory...");
+            LogEndWork();
+            //Console.WriteLine($"{this.ToString()} Back to labolatory...");
+            StateLogger.DrawState($"{this.ToString()} Back to labolatory...");
         }
     }
 }

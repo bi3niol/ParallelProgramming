@@ -23,12 +23,14 @@ namespace WUT.Zad1.Lib.Wizards
             while (Working)
             {
                 Thread.Sleep(MinCharmTime + random.Next() % Interval);
-                Console.WriteLine($"{Name} : start taking off the charms");
+                //Console.WriteLine($"{Name} : start taking off the charms");
                 foreach (var fac in factories)
                 {
                     fac.RemoveCharm();
                 }
-                Console.WriteLine($"{Name} : Finished");
+                //Console.WriteLine($"{Name} : Finished");
+                StateLogger.DrawState();
+
             }
         }
     }

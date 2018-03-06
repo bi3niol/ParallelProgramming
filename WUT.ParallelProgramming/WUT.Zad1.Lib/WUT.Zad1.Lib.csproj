@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="ResourceTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateLogger.cs" />
     <Compile Include="Storehouse.cs" />
     <Compile Include="Tasks\GetResourcesTask.cs" />
     <Compile Include="Wizard.cs" />
@@ -63,7 +64,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="LibSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>LibSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
