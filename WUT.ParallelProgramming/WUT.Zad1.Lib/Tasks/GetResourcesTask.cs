@@ -21,6 +21,10 @@ namespace WUT.Zad1.Lib.Tasks
 
         public int Piority { get; set; }
 
+        public ResourceTypes NeedResources => needResources;
+
+        public DateTime StartTime { get; } = DateTime.Now;
+
         public bool CanExecute(ResourceTypes availableResources)
         {
             return (availableResources & needResources) == needResources;

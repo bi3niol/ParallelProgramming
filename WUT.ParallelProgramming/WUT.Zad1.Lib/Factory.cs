@@ -18,6 +18,7 @@ namespace WUT.Zad1.Lib
         private Semaphore sizeSem = new Semaphore(1, 1);
         private Semaphore charmsSem = new Semaphore(1, 1);
         private Semaphore productionSem;
+        private Semaphore isOccupiedSem = new Semaphore(1, 1);
 
         private bool Running = true;
         private Random random = new Random(Guid.NewGuid().GetHashCode());
@@ -26,11 +27,12 @@ namespace WUT.Zad1.Lib
         {
             Running = false;
         }
+        bool wasReleasedOccupied = true;
         public void AddCharm()
         {
             charmsSem.WaitOne();
             charmsCount++;
-           // Console.WriteLine($"New Charm added to {Name} Factory");
+            // Console.WriteLine($"New Charm added to {Name} Factory");
             //Console.WriteLine(this);
             charmsSem.Release();
         }
@@ -39,7 +41,13 @@ namespace WUT.Zad1.Lib
         public void RemoveCharm()
         {
             charmsSem.WaitOne();
+            var canRelease = charmsCount == 1;
             charmsCount = Math.Max(0, charmsCount - 1);
+            if (!wasReleasedOccupied && canRelease)
+            {
+                wasReleasedOccupied = true;
+                isOccupiedSem.Release();
+            }
             //Console.WriteLine($"One Charm removed from {Name} Factory");
             //Console.WriteLine(this);
             charmsSem.Release();
@@ -72,16 +80,10 @@ namespace WUT.Zad1.Lib
             CurrSize++;
             //Console.WriteLine($"Resource has been produced by Factory {Name}");
             //Console.WriteLine(this);
+            Storehouse.SignalNewResource();
             sizeSem.Release();
         }
-        private bool IsOccupied
-        {
-            get
-            {
-                bool res = charmsCount != 0;
-                return res;
-            }
-        }
+
         public Factory(string name, int minProdTime, int interval, int maxSize = 2)
         {
             productionSem = new Semaphore(maxSize, maxSize);
@@ -90,35 +92,35 @@ namespace WUT.Zad1.Lib
             Interval = interval;
             MaxSize = maxSize;
         }
-
+        private void WaitIfOccupied()
+        {
+            charmsSem.WaitOne();
+            if (charmsCount == 0 && !wasReleasedOccupied)
+            {
+                charmsSem.Release();
+                return;
+            }
+            charmsSem.Release();
+            StateLogger.DrawState($"Factory {Name} is OCCUPIED by {charmsCount} charms");
+            isOccupiedSem.WaitOne();
+            StateLogger.DrawState($"Factory {Name} CONTINUE work");
+            wasReleasedOccupied = false;
+        }
         public void Run()
         {
             Running = true;
             //Console.WriteLine($"{Name} Started");
             StateLogger.DrawState($"{Name} Started");
-            bool wasOccupied = false;
             while (Running)
             {
                 productionSem.WaitOne();
-                if (IsOccupied)
-                {
-                    if (!wasOccupied)
-                    {
-                        //Console.WriteLine($"Factory {Name} is Occupied by {charmsCount} charms");
-                        StateLogger.DrawState($"Factory {Name} is Occupied by {charmsCount} charms");
-                        wasOccupied = true;
-                    }
-                    productionSem.Release();
-                }
-                else
-                {
-                    //Console.WriteLine($"Factory {Name} is producing new resource");
-                    StateLogger.DrawState($"Factory {Name} is producing new resource");
-                    Thread.Sleep(MinProdTime + random.Next() % Interval);
-                    AddProduct();
-                    StateLogger.DrawState($"Factory {Name} is produced new resource");
-                    wasOccupied = false;
-                }
+                WaitIfOccupied();
+
+                //Console.WriteLine($"Factory {Name} is producing new resource");
+                StateLogger.DrawState($"Factory {Name} is producing new resource");
+                Thread.Sleep(MinProdTime + random.Next() % Interval);
+                AddProduct();
+                StateLogger.DrawState($"Factory {Name} is produced new resource");
                 Thread.Sleep(0);
             }
             //Console.WriteLine($"{Name} End Work");

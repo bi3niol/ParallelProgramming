@@ -13,12 +13,11 @@ namespace WUT.Zad1.Lib
         private static bool IsWorking = false;
         private static bool wasStoreStarted = false;
         private static Thread storeThread;
-
         public static Factory S_Factory { get; set; }
         public static Factory Pb_Factory { get; set; }
         public static Factory Hg_Factory { get; set; }
 
-
+        private static Semaphore newResourceSem = new Semaphore(0, int.MaxValue);
         private static Semaphore taskListSem = new Semaphore(1, 1);
         private static List<ITask> SnapShotOfTaskList
         {
@@ -37,6 +36,10 @@ namespace WUT.Zad1.Lib
             {
                 return waittingTaskList.Count;
             }
+        }
+        public static void SignalNewResource()
+        {
+            newResourceSem.Release();
         }
 
         public static void AddTask(ITask task)
@@ -73,17 +76,28 @@ namespace WUT.Zad1.Lib
         {
             while (IsWorking)
             {
+                newResourceSem.WaitOne();
                 var temListHandler = SnapShotOfTaskList;
                 var resources = CheckAvailableResources();
-                foreach (var item in temListHandler)
+                var groupsOfAlchemicsTasks = temListHandler.GroupBy(t => t.NeedResources).OrderBy(g=>g.FirstOrDefault().StartTime);
+
+                foreach (var tasks in groupsOfAlchemicsTasks)
                 {
-                    if (item.CanExecute(resources))
+                    foreach (var item in tasks)
                     {
-                        GetResources(item.Execute());
-                        RemoveTask(item);
-                        resources = CheckAvailableResources();
+                        if (item.CanExecute(resources))
+                        {
+                            GetResources(item.Execute());
+                            RemoveTask(item);
+                            resources = CheckAvailableResources();
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
+              
                 Thread.Sleep(0);
             }
         }
