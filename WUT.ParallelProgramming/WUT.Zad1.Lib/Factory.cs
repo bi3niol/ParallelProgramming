@@ -101,7 +101,7 @@ namespace WUT.Zad1.Lib
                 return;
             }
             charmsSem.Release();
-            StateLogger.DrawState($"Factory {Name} is OCCUPIED by {charmsCount} charms");
+            StateLogger.DrawState($"Factory {Name} is OCCUPIED with {charmsCount} charms");
             isOccupiedSem.WaitOne();
             StateLogger.DrawState($"Factory {Name} CONTINUE work");
             wasReleasedOccupied = false;

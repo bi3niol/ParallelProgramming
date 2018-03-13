@@ -83,13 +83,13 @@ namespace WUT.Zad1.Lib
             }
             //facSem.Release();
             sb.AppendLine(line);
-            sb.AppendFormat(prop_valFormat, "Spawned Alchemics A", "alchemics how gets Resources");
+            sb.AppendFormat(prop_valFormat, "Number of Alchemics A", "alchemics who gets Resources");
             sb.AppendFormat(prop_valFormat, SpawnedA, finishedA);
-            sb.AppendFormat(prop_valFormat, "Spawned Alchemics B", "");
+            sb.AppendFormat(prop_valFormat, "Number of Alchemics B", "");
             sb.AppendFormat(prop_valFormat, SpawnedB, finishedB);
-            sb.AppendFormat(prop_valFormat, "Spawned Alchemics C", "");
+            sb.AppendFormat(prop_valFormat, "Number of Alchemics C", "");
             sb.AppendFormat(prop_valFormat, SpawnedC, finishedC);
-            sb.AppendFormat(prop_valFormat, "Spawned Alchemics D", "");
+            sb.AppendFormat(prop_valFormat, "Number of Alchemics D", "");
             sb.AppendFormat(prop_valFormat, SpawnedD, finishedD);
             sb.AppendLine(line);
             sb.AppendFormat(prop_valFormat, "Alchemics who are waitting", Storehouse.WaitingCount);
