@@ -9,16 +9,16 @@ namespace WUT.Zad1.Lib
 {
     public static class StateLogger
     {
-        const int MaxMessagesCount = 13;
+        private static int MaxMessagesCount = LibSettings.Default.LoggedMsgCount;
         private static List<Factory> factories = new List<Factory>();
         private static List<String> messages = new List<string>();
-        private static Semaphore semaphore = new Semaphore(1, 1);
-        private static Semaphore msgSem = new Semaphore(1, 1);
-        private static Semaphore facSem = new Semaphore(1, 1);
-        private static Semaphore fA = new Semaphore(1, 1);
-        private static Semaphore fB = new Semaphore(1, 1);
-        private static Semaphore fC = new Semaphore(1, 1);
-        private static Semaphore fD = new Semaphore(1, 1);
+        private static SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim msgSem = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim facSem = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim fA = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim fB = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim fC = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim fD = new SemaphoreSlim(1, 1);
         private static string line = new string('=', 61);
         private static string prop_valFormat = "|{0,28}|{1,28}|\n";
         private static string clearLine = new string(' ', 70) + "\r";
@@ -33,31 +33,31 @@ namespace WUT.Zad1.Lib
 
         public static void SetFactories(Factory[] _factories)
         {
-            facSem.WaitOne();
+            facSem.Wait();
             factories = _factories.ToList();
             facSem.Release();
         }
         public static void FinishA()
         {
-            fA.WaitOne();
+            fA.Wait();
             finishedA++;
             fA.Release();
         }
         public static void FinishB()
         {
-            fB.WaitOne();
+            fB.Wait();
             finishedB++;
             fB.Release();
         }
         public static void FinishC()
         {
-            fC.WaitOne();
+            fC.Wait();
             finishedC++;
             fC.Release();
         }
         public static void FinishD()
         {
-            fD.WaitOne();
+            fD.Wait();
             finishedD++;
             fD.Release();
         }
@@ -65,7 +65,7 @@ namespace WUT.Zad1.Lib
         {
             if (string.IsNullOrEmpty(msg))
                 return;
-            msgSem.WaitOne();
+            msgSem.Wait();
             if (messages.Count == MaxMessagesCount)
                 messages.RemoveAt(0);
             messages.Add(msg);
@@ -76,7 +76,7 @@ namespace WUT.Zad1.Lib
             var sb = new StringBuilder();
             AddMessage(msg);
             sb.AppendLine(line);
-            //facSem.WaitOne();
+            //facSem.Wait();
             foreach (var item in factories)
             {
                 sb.AppendLine(item.ToString());
@@ -94,7 +94,7 @@ namespace WUT.Zad1.Lib
             sb.AppendLine(line);
             sb.AppendFormat(prop_valFormat, "Alchemics who are waitting", Storehouse.WaitingCount);
             sb.AppendLine(line);
-            msgSem.WaitOne();
+            msgSem.Wait();
             foreach (var item in messages)
             {
                 sb.Append(clearLine);
@@ -102,11 +102,11 @@ namespace WUT.Zad1.Lib
             }
             msgSem.Release();
             sb.AppendLine(line);
-            semaphore.WaitOne();
+            SemaphoreSlim.Wait();
             Console.SetCursorPosition(0, 1);
             Console.Write(sb.ToString());
             Console.SetCursorPosition(0, 1);
-            semaphore.Release();
+            SemaphoreSlim.Release();
         }
     }
 }

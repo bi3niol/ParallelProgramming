@@ -9,12 +9,12 @@ namespace WUT.Zad1.Lib.Tasks
 {
     public sealed class GetResourcesTask:ITask
     {
-        private Semaphore semaphore;
+        private SemaphoreSlim SemaphoreSlim;
         private ResourceTypes needResources;
         private object Owner;
-        public GetResourcesTask(object owner,Semaphore _semaphore, ResourceTypes _needResources)
+        public GetResourcesTask(object owner,SemaphoreSlim _SemaphoreSlim, ResourceTypes _needResources)
         {
-            semaphore = _semaphore;
+            SemaphoreSlim = _SemaphoreSlim;
             needResources = _needResources;
             Owner = owner;
         }
@@ -34,7 +34,7 @@ namespace WUT.Zad1.Lib.Tasks
         {
             //Console.WriteLine($"{Owner} : resources are available. Take resources : {needResources}");
             StateLogger.DrawState($"{Owner} : resources are available. Take resources : {needResources}");
-            semaphore.Release();
+            SemaphoreSlim.Release();
             return needResources;
         }
     }

@@ -17,13 +17,13 @@ namespace WUT.Zad1.Lib
         public static Factory Pb_Factory { get; set; }
         public static Factory Hg_Factory { get; set; }
 
-        private static Semaphore newResourceSem = new Semaphore(0, int.MaxValue);
-        private static Semaphore taskListSem = new Semaphore(1, 1);
+        private static SemaphoreSlim newResourceSem = new SemaphoreSlim(0, int.MaxValue);
+        private static SemaphoreSlim taskListSem = new SemaphoreSlim(1, 1);
         private static List<ITask> SnapShotOfTaskList
         {
             get
             {
-                taskListSem.WaitOne();
+                taskListSem.Wait();
                 var res = waittingTaskList.ToList();
                 taskListSem.Release();
                 return res;
@@ -44,14 +44,14 @@ namespace WUT.Zad1.Lib
 
         public static void AddTask(ITask task)
         {
-            taskListSem.WaitOne();
+            taskListSem.Wait();
             waittingTaskList.Add(task);
             taskListSem.Release();
         }
 
         public static void RemoveTask(ITask task)
         {
-            taskListSem.WaitOne();
+            taskListSem.Wait();
             waittingTaskList.Remove(task);
             taskListSem.Release();
         }
@@ -76,7 +76,7 @@ namespace WUT.Zad1.Lib
         {
             while (IsWorking)
             {
-                newResourceSem.WaitOne();
+                newResourceSem.Wait();
                 var temListHandler = SnapShotOfTaskList;
                 var resources = CheckAvailableResources();
                 var groupsOfAlchemicsTasks = temListHandler.GroupBy(t => t.NeedResources).OrderBy(g=>g.FirstOrDefault().StartTime);

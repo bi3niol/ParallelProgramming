@@ -130,5 +130,14 @@ namespace WUT.Zad1.Lib {
                 return ((int)(this["GoodWizardsCount"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int LoggedMsgCount {
+            get {
+                return ((int)(this["LoggedMsgCount"]));
+            }
+        }
     }
 }

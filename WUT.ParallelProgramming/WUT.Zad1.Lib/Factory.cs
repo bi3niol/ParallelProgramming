@@ -15,10 +15,10 @@ namespace WUT.Zad1.Lib
 
         public string Name { get; private set; }
 
-        private Semaphore sizeSem = new Semaphore(1, 1);
-        private Semaphore charmsSem = new Semaphore(1, 1);
-        private Semaphore productionSem;
-        private Semaphore isOccupiedSem = new Semaphore(1, 1);
+        private SemaphoreSlim sizeSem = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim charmsSem = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim productionSem;
+        private SemaphoreSlim isOccupiedSem = new SemaphoreSlim(1, 1);
 
         private bool Running = true;
         private Random random = new Random(Guid.NewGuid().GetHashCode());
@@ -30,7 +30,7 @@ namespace WUT.Zad1.Lib
         bool wasReleasedOccupied = true;
         public void AddCharm()
         {
-            charmsSem.WaitOne();
+            charmsSem.Wait();
             charmsCount++;
             // Console.WriteLine($"New Charm added to {Name} Factory");
             //Console.WriteLine(this);
@@ -40,7 +40,7 @@ namespace WUT.Zad1.Lib
 
         public void RemoveCharm()
         {
-            charmsSem.WaitOne();
+            charmsSem.Wait();
             var canRelease = charmsCount == 1;
             charmsCount = Math.Max(0, charmsCount - 1);
             if (!wasReleasedOccupied && canRelease)
@@ -55,7 +55,7 @@ namespace WUT.Zad1.Lib
 
         public int GetProduct()
         {
-            sizeSem.WaitOne();
+            sizeSem.Wait();
             var res = CurrSize == 0 ? 0 : 1;
             if (CurrSize > 0)
             {
@@ -76,7 +76,7 @@ namespace WUT.Zad1.Lib
 
         private void AddProduct()
         {
-            sizeSem.WaitOne();
+            sizeSem.Wait();
             CurrSize++;
             //Console.WriteLine($"Resource has been produced by Factory {Name}");
             //Console.WriteLine(this);
@@ -86,7 +86,7 @@ namespace WUT.Zad1.Lib
 
         public Factory(string name, int minProdTime, int interval, int maxSize = 2)
         {
-            productionSem = new Semaphore(maxSize, maxSize);
+            productionSem = new SemaphoreSlim(maxSize, maxSize);
             Name = name;
             MinProdTime = minProdTime;
             Interval = interval;
@@ -94,7 +94,7 @@ namespace WUT.Zad1.Lib
         }
         private void WaitIfOccupied()
         {
-            charmsSem.WaitOne();
+            charmsSem.Wait();
             if (charmsCount == 0 && !wasReleasedOccupied)
             {
                 charmsSem.Release();
@@ -102,7 +102,7 @@ namespace WUT.Zad1.Lib
             }
             charmsSem.Release();
             StateLogger.DrawState($"Factory {Name} is OCCUPIED by {charmsCount} charms");
-            isOccupiedSem.WaitOne();
+            isOccupiedSem.Wait();
             StateLogger.DrawState($"Factory {Name} CONTINUE work");
             wasReleasedOccupied = false;
         }
@@ -113,7 +113,7 @@ namespace WUT.Zad1.Lib
             StateLogger.DrawState($"{Name} Started");
             while (Running)
             {
-                productionSem.WaitOne();
+                productionSem.Wait();
                 WaitIfOccupied();
 
                 //Console.WriteLine($"Factory {Name} is producing new resource");
