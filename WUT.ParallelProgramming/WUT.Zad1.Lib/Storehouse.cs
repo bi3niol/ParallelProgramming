@@ -18,6 +18,7 @@ namespace WUT.Zad1.Lib
         public static Factory Hg_Factory { get; set; }
 
         private static SemaphoreSlim newResourceSem = new SemaphoreSlim(0, int.MaxValue);
+        private static SemaphoreSlim waitAllchemicsSem = new SemaphoreSlim(0, int.MaxValue);
         private static SemaphoreSlim taskListSem = new SemaphoreSlim(1, 1);
         private static List<ITask> SnapShotOfTaskList
         {
@@ -46,6 +47,7 @@ namespace WUT.Zad1.Lib
         {
             taskListSem.Wait();
             waittingTaskList.Add(task);
+            waitAllchemicsSem.Release();
             taskListSem.Release();
         }
 
@@ -77,27 +79,24 @@ namespace WUT.Zad1.Lib
             while (IsWorking)
             {
                 newResourceSem.Wait();
+                waitAllchemicsSem.Wait();
                 var temListHandler = SnapShotOfTaskList;
                 var resources = CheckAvailableResources();
-                var groupsOfAlchemicsTasks = temListHandler.GroupBy(t => t.NeedResources).OrderBy(g=>g.FirstOrDefault().StartTime);
-
+                var groupsOfAlchemicsTasks = temListHandler.GroupBy(t => t.NeedResources).OrderBy(g => g.FirstOrDefault().StartTime);
+                bool taskFinished = false;
                 foreach (var tasks in groupsOfAlchemicsTasks)
                 {
-                    foreach (var item in tasks)
+                    if (tasks.ElementAt(0).CanExecute(resources))
                     {
-                        if (item.CanExecute(resources))
-                        {
-                            GetResources(item.Execute());
-                            RemoveTask(item);
-                            resources = CheckAvailableResources();
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        GetResources(tasks.ElementAt(0).Execute());
+                        RemoveTask(tasks.ElementAt(0));
+                        resources = CheckAvailableResources();
+                        taskFinished = true;
+                        break;
                     }
                 }
-              
+                if (!taskFinished)
+                    waitAllchemicsSem.Release();
                 Thread.Sleep(0);
             }
         }
@@ -105,7 +104,7 @@ namespace WUT.Zad1.Lib
         private static bool GetResources(ResourceTypes resource)
         {
             if ((resource & ResourceTypes.Pb) != 0)
-                if(Pb_Factory.GetProduct()==0)
+                if (Pb_Factory.GetProduct() == 0)
                     //Console.WriteLine("GetProduct returned 0 !!!!...");
                     StateLogger.DrawState("GetProduct returned 0 !!!!...");
 
