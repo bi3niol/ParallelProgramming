@@ -118,7 +118,6 @@ namespace WUT.ParallelPrograming.EX2.Monitors
                 CucumberPlates[IdToGolbets[id]]--;
                 GolbetInUse[IdToGolbets[id]] = true;
                 PlateInUse[IdToCucumbers[id]] = true;
-                knightDrinkStates[id] = KnightDrinkStates.Drinking;
             }
             lock (WineButtleLock)
             {
@@ -126,6 +125,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
                     WineBottleCondition.Wait(WineButtleLock);
                 WineButtle--;
             }
+            knightDrinkStates[id] = KnightDrinkStates.Drinking;
             DrawState();
         }
 
