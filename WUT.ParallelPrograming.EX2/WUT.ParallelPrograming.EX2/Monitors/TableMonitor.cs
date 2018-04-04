@@ -38,6 +38,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
         private int WineButtle;
         private int[] CucumberPlates;
         private bool[] GolbetInUse;
+        private bool[] PlateInUse;
         private object WineButtleLock = new object();
         private CodeExMachina.ConditionVariable WineBottleCondition = new CodeExMachina.ConditionVariable();
 
@@ -58,6 +59,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             knightSpeakStates = new KnightSpeakStates[knights];
             CucumberPlates = new int[knights / 2];
             GolbetInUse = new bool[knights / 2];
+            PlateInUse = new bool[knights / 2];
             for (int i = 0; i < CucumberPlates.Length; i++)
             {
                 CucumberPlates[i] = c;
@@ -79,24 +81,29 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             lock (WineButtleLock)
             {
                 WineButtle = WineButtleCapacity;
+                WineBottleCondition.PulseAll();
             }
-            WineBottleCondition.PulseAll();
+            DrawState();
         }
 
         public void AddCucumbers()
         {
             lock (knightDrinkStates)
             {
+                if (random.Next() % 2 == 0)
+                    for (int i = 0; i < WaitDrinkingConditions.Length; i++)
+                    {
+                        if (CucumberPlates[IdToCucumbers[i]] == 0)
+                            WaitDrinkingConditions[i].Pulse();
+                    }
+                else
+                    for (int i = WaitDrinkingConditions.Length - 1; i >= 0; i--)
+                        if (CucumberPlates[IdToCucumbers[i]] == 0)
+                            WaitDrinkingConditions[i].Pulse();
                 for (int i = 0; i < CucumberPlates.Length; i++)
                     CucumberPlates[i] = MaxCucumbersOnPlate;
             }
-
-            if (random.Next() % 2 == 0)
-                for (int i = 0; i < WaitDrinkingConditions.Length; i++)
-                    WaitDrinkingConditions[i].Pulse();
-            else
-                for (int i = WaitDrinkingConditions.Length - 1; i >= 0; i--)
-                    WaitDrinkingConditions[i].Pulse();
+            DrawState();
         }
 
         public void StartDrink(int id)
@@ -110,6 +117,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
                 }
                 CucumberPlates[IdToGolbets[id]]--;
                 GolbetInUse[IdToGolbets[id]] = true;
+                PlateInUse[IdToCucumbers[id]] = true;
                 knightDrinkStates[id] = KnightDrinkStates.Drinking;
             }
             lock (WineButtleLock)
@@ -126,6 +134,8 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             lock (knightDrinkStates)
             {
                 GolbetInUse[IdToGolbets[id]] = false;
+                PlateInUse[IdToCucumbers[id]] = false;
+
                 knightDrinkStates[id] = KnightDrinkStates.Free;
                 if (random.Next() % 2 == 0)
                 {
@@ -143,7 +153,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
 
         private bool CanTakeItems(int id)
         {
-            return CucumberPlates[IdToCucumbers[id]] > 0 && !GolbetInUse[IdToGolbets[id]];
+            return CucumberPlates[IdToCucumbers[id]] > 0 && !GolbetInUse[IdToGolbets[id]] && !PlateInUse[IdToCucumbers[id]];
         }
 
 
@@ -210,18 +220,21 @@ namespace WUT.ParallelPrograming.EX2.Monitors
         private void DrawState()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(propNameFormat, "Knight ID");
+            stringBuilder.AppendFormat(valueFormat, "Knight ID");
+            stringBuilder.AppendFormat(valueFormat, " Story State");
+            stringBuilder.AppendFormat(valueFormat, "Drink State");
+            stringBuilder.AppendFormat(valueFormat, "CUCUM.. plates");
+            stringBuilder.Append($" Wine state  {WineButtle}/{WineButtleCapacity}");
+            stringBuilder.AppendLine();
             for (int i = 0; i < KnightsCount; i++)
+            {
                 stringBuilder.AppendFormat(valueFormat, $"     {i}");
-            stringBuilder.AppendLine();
-            stringBuilder.AppendFormat(propNameFormat, "Drink State ");
-            for (int i = 0; i < KnightsCount; i++)
-                stringBuilder.AppendFormat(valueFormat, $" {knightDrinkStates[i]} ");
-            stringBuilder.AppendLine();
-            stringBuilder.AppendFormat(propNameFormat, "Story State ");
-            for (int i = 0; i < KnightsCount; i++)
-                stringBuilder.AppendFormat(valueFormat, $" {knightSpeakStates[i]} ");
-            stringBuilder.AppendLine();
+                stringBuilder.AppendFormat(valueFormat, $"{knightSpeakStates[i]}");
+                stringBuilder.AppendFormat(valueFormat, $"{knightDrinkStates[i]}");
+                stringBuilder.AppendFormat(valueFormat, $"{CucumberPlates[IdToCucumbers[i]]}");
+                stringBuilder.AppendLine();
+            }
+
             lock (Console.Out)
             {
                 Console.SetCursorPosition(0, 0);

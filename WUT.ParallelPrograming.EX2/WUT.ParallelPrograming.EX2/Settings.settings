@@ -15,7 +15,7 @@
       <Value Profile="(Default)">500</Value>
     </Setting>
     <Setting Name="WineButtleCapacity" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">14</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="MaxCucumbersOnPlate" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">5</Value>
