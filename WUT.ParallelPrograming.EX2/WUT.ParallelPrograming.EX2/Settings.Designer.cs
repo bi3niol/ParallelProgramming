@@ -62,9 +62,9 @@ namespace WUT.ParallelPrograming.EX2 {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int WineButtleCapacity {
+        public int WineBottleCapacity {
             get {
-                return ((int)(this["WineButtleCapacity"]));
+                return ((int)(this["WineBottleCapacity"]));
             }
         }
         

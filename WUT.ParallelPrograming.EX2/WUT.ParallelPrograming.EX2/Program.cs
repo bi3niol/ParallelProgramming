@@ -79,7 +79,7 @@ namespace WUT.ParallelPrograming.EX2
                 new Thread(new ThreadStart(new KnightWorker(Settings.Default.SleepTime,Settings.Default.StoryTime,
                     Settings.Default.TimeVariation,i,i==Settings.Default.KingId).Work)).Start();
             }
-            new Thread(new ThreadStart(new WaiterWorker(TableMonitor.Instance.FillWineButtle,"WINE waiter :",
+            new Thread(new ThreadStart(new WaiterWorker(TableMonitor.Instance.FillWineBottle,"WINE waiter :",
                 Settings.Default.WaiterTime,Settings.Default.TimeVariation).Work)).Start();
 
             new Thread(new ThreadStart(new WaiterWorker(TableMonitor.Instance.AddCucumbers, "CUCUMBER waiter :",

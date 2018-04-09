@@ -15,7 +15,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             get
             {
                 if (_instane == null)
-                    _instane = new TableMonitor(Settings.Default.KnightCount, Settings.Default.MaxCucumbersOnPlate, Settings.Default.WineButtleCapacity);
+                    _instane = new TableMonitor(Settings.Default.KnightCount, Settings.Default.MaxCucumbersOnPlate, Settings.Default.WineBottleCapacity);
                 return _instane;
             }
         }
@@ -35,26 +35,26 @@ namespace WUT.ParallelPrograming.EX2.Monitors
         private CodeExMachina.ConditionVariable KingSpeakingCondition = new CodeExMachina.ConditionVariable();
         private int KingId = 0;
 
-        private int WineButtle;
+        private int WineBottle;
         private int[] CucumberPlates;
         private bool[] GolbetInUse;
         private bool[] PlateInUse;
-        private object WineButtleLock = new object();
+        private object WineBottleLock = new object();
         private CodeExMachina.ConditionVariable WineBottleCondition = new CodeExMachina.ConditionVariable();
 
         private KnightDrinkStates[] knightDrinkStates;
         private CodeExMachina.ConditionVariable[] WaitDrinkingConditions;
 
         private int KnightsCount;
-        private int WineButtleCapacity;
+        private int WineBottleCapacity;
         private int MaxCucumbersOnPlate;
         private TableMonitor(int knights, int c, int w, int kingId = 0)
         {
             KingId = kingId;
             KnightsCount = knights;
             MaxCucumbersOnPlate = c;
-            WineButtle = w;
-            WineButtleCapacity = w;
+            WineBottle = w;
+            WineBottleCapacity = w;
             knightDrinkStates = new KnightDrinkStates[knights];
             knightSpeakStates = new KnightSpeakStates[knights];
             CucumberPlates = new int[knights / 2];
@@ -76,11 +76,11 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             }
         }
 
-        public void FillWineButtle()
+        public void FillWineBottle()
         {
-            lock (WineButtleLock)
+            lock (WineBottleLock)
             {
-                WineButtle = WineButtleCapacity;
+                WineBottle = WineBottleCapacity;
                 WineBottleCondition.PulseAll();
             }
             DrawState();
@@ -119,11 +119,11 @@ namespace WUT.ParallelPrograming.EX2.Monitors
                 GolbetInUse[IdToGolbets[id]] = true;
                 PlateInUse[IdToCucumbers[id]] = true;
             }
-            lock (WineButtleLock)
+            lock (WineBottleLock)
             {
-                while (WineButtle == 0)
-                    WineBottleCondition.Wait(WineButtleLock);
-                WineButtle--;
+                while (WineBottle == 0)
+                    WineBottleCondition.Wait(WineBottleLock);
+                WineBottle--;
             }
             knightDrinkStates[id] = KnightDrinkStates.Drinking;
             DrawState();
@@ -224,7 +224,7 @@ namespace WUT.ParallelPrograming.EX2.Monitors
             stringBuilder.AppendFormat(valueFormat, " Story State");
             stringBuilder.AppendFormat(valueFormat, "Drink State");
             stringBuilder.AppendFormat(valueFormat, "CUCUM.. plates");
-            stringBuilder.Append($" Wine state  {WineButtle}/{WineButtleCapacity}");
+            stringBuilder.Append($" Wine state  {WineBottle}/{WineBottleCapacity}");
             stringBuilder.AppendLine();
             for (int i = 0; i < KnightsCount; i++)
             {
