@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E766AED5-A465-4833-88AD-D33D3C798E70}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>WUT.ParallelProgramming.EX3.Console</RootNamespace>
-    <AssemblyName>WUT.ParallelProgramming.EX3.Console</AssemblyName>
+    <ProjectGuid>{F2297EDB-C395-4504-B5E2-42C14A9733E6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WUT.ParallelProgramming.EX3.Jankiel</RootNamespace>
+    <AssemblyName>WUT.ParallelProgramming.EX3.Jankiel</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -45,8 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Jankiel.cs" />
+    <Compile Include="JankielManager.cs" />
+    <Compile Include="Messages\ElectionStatusMessage.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\StartExMessage.cs" />
+    <Compile Include="Messages\VoteMessage.cs" />
+    <Compile Include="NeighborInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -55,22 +58,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WUT.ParallelProgramming.EX3.Jankiel\WUT.ParallelProgramming.EX3.Jankiel.csproj">
-      <Project>{F2297EDB-C395-4504-B5E2-42C14A9733E6}</Project>
-      <Name>WUT.ParallelProgramming.EX3.Jankiel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WUT.ParallelProgramming.ServerMQTT\WUT.ParallelProgramming.ServerMQTT.csproj">
-      <Project>{67FC800B-E2D6-4EFD-B7D2-5D5599AAC53E}</Project>
-      <Name>WUT.ParallelProgramming.ServerMQTT</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
