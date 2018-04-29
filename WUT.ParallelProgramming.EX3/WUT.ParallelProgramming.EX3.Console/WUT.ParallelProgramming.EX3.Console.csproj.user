@@ -4,6 +4,6 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>"C:\Users\mabien\source\repos\ParallelProgramming\WUT.ParallelProgramming.EX3\WUT.ParallelProgramming.EX3.Console\positions.txt"</StartArguments>
+    <StartArguments>"C:\Users\Bi3NioL\Source\Repos\ParallelProgramming\WUT.ParallelProgramming.EX3\WUT.ParallelProgramming.EX3.Console\positions.txt"</StartArguments>
   </PropertyGroup>
 </Project>

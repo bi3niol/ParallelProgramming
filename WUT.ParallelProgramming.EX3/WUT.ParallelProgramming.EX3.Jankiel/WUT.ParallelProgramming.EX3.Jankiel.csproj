@@ -50,6 +50,7 @@
     <Compile Include="Messages\FinishedTourMessage.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\StartExMessage.cs" />
+    <Compile Include="Messages\StartTourMessage.cs" />
     <Compile Include="Messages\VoteMessage.cs" />
     <Compile Include="NeighborInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

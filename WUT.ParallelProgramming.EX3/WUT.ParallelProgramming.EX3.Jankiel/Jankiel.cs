@@ -21,20 +21,31 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         {
             Name = name;
             MasterName = master;
-            random = new Random(/*name.GetHashCode()*/);
+            random = new Random(name.GetHashCode());
             jankielManager = new JankielManager(this);
             jankielManager.SetUpConnection(name, neighbors, master);
         }
-        public bool NotEnd { get; set; } = false;
         public async void Run()
         {
             Console.WriteLine($"Jankiel {Name} Czeka na start ...");
             jankielManager.WaitForStart();
-            while (NotEnd)
+            ElectionStatus status = ElectionStatus.None;
+            while (status != ElectionStatus.Selected)
             {
+                await jankielManager.SendMsg(new StartTourMessage(Name));
+                jankielManager.WaitStartTour();
+                Console.WriteLine($"Start rundy ");
+                status = await MIS();
+                if (status == ElectionStatus.Selected)
+                {
+                    Console.WriteLine($"Jankiel {Name} gra koncert !");
+                    Thread.Sleep(2000);
+                }
 
+                await jankielManager.SendMsg(new FinishedTourMessage(Name, status == ElectionStatus.Selected));
+                jankielManager.WaitFinishTour();
+                Console.WriteLine($"koniec rundy ");
             }
-            var status = await MIS();
             Console.WriteLine($"Jankiel {Name} skonczył {status} ...");
         }
 
@@ -49,7 +60,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                 for (int j = 0; j < jankielManager.SecondMISForLength; j++)
                 {
                     v = 0;
-                    //
                     if (random.NextDouble() < choosePropability)
                         v = 1;
                     if (status == ElectionStatus.Selected)
@@ -57,16 +67,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                     if (status == ElectionStatus.Lose)
                         v = 0;
                     await jankielManager.SendMsg(new VoteMessage(Name, v));
-                    //if (random.NextDouble() < choosePropability)
-                    //{
-                    //    v = 1;
-                    //    await jankielManager.SendMsg(new VoteMessage(Name, 1));
-                    //}
-                    //else
-                    //    await jankielManager.SendMsg(new VoteMessage(Name, 0));
-
-                    //jeśli w poprzedniej iteracji obecny jankiel został wybrany, tej i kolejnych 
-                    //iteracjach zawsze powinnismy otrzymac false
                     bool isBRecived = jankielManager.RecivedB();
                     if (isBRecived)
                         v = 0;
@@ -78,14 +78,9 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                     if (v == 0 && isBRecived)
                         status = ElectionStatus.Lose;
                     await jankielManager.SendMsg(new ElectionStatusMessage(status, Name));
-
                     jankielManager.WaitForNeighborsStatus();
-
-                    Thread.Sleep(200);
                 }
             }
-            await jankielManager.SendMsg(new FinishedTourMessage(Name));
-            jankielManager.WaitFinishTour();
             return status;
         }
 

@@ -16,6 +16,12 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         private SemaphoreSlim waitStatusSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitVoteSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitFinishedTourSem = new SemaphoreSlim(0, int.MaxValue);
+        private SemaphoreSlim waitStartTourSem = new SemaphoreSlim(0, int.MaxValue);
+
+        internal void StartArrivedTour()
+        {
+            waitStartTourSem.Release();
+        }
 
         public void StatusRecived()
         {
@@ -58,6 +64,11 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         {
             LastVote = 0;
             Status = Jankiel.ElectionStatus.None;
+        }
+
+        internal void WaitStartTour()
+        {
+            waitStartTourSem.Wait();
         }
     }
 }

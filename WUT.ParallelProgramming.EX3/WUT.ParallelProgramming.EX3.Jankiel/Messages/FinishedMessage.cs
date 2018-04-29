@@ -15,7 +15,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel.Messages
 
         public override void ProcessMessage(JankielManager jankiel)
         {
-            jankiel.ProcessFinishedMessage(this);
+            //jankiel.ProcessFinishedMessage(this);
         }
     }
 }

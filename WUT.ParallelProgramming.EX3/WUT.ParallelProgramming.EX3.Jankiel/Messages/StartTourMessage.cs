@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 namespace WUT.ParallelProgramming.EX3.Jankiel.Messages
 {
     [Serializable]
-    public class FinishedTourMessage : Message
+    public class StartTourMessage : Message
     {
-        public bool HadConcert { get; set; }
-        public FinishedTourMessage(string from,bool hadConcert) : base(from)
+        public StartTourMessage(string from) : base(from)
         {
-            HadConcert = hadConcert;
         }
 
         public override void ProcessMessage(JankielManager jankiel)
         {
-            jankiel.ProcessFinishedTourMessage(this);
+            jankiel.ProcessStartTour(this);
         }
     }
 }

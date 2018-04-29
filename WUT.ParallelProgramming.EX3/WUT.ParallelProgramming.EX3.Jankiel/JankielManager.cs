@@ -19,21 +19,39 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             jankiel = j;
         }
 
+        internal void ProcessStartTour(StartTourMessage startTourMessage)
+        {
+            NeighborsInfo[startTourMessage.From].StartArrivedTour();
+        }
+
         internal void ProcessFinishedTourMessage(FinishedTourMessage finishedTourMessage)
         {
+            if (finishedTourMessage.HadConcert)
+            {
+                ProcessFinishedMessage(finishedTourMessage.From);
+            }
             NeighborsInfo[finishedTourMessage.From].FinishedTour();
         }
 
         private SemaphoreSlim unSubscribeSem = new SemaphoreSlim(0, 1);
-        internal void ProcessFinishedMessage(FinishedMessage finishedMessage)
+        internal void ProcessFinishedMessage(string From)
         {
-            client.UnsubscribeAsync(finishedMessage.From).ContinueWith(t=> { unSubscribeSem.Release(); });
+            client.UnsubscribeAsync(From).ContinueWith(t=> { unSubscribeSem.Release(); });
             unSubscribeSem.Wait();
-            NeighborsInfo[finishedMessage.From].Status = Jankiel.ElectionStatus.Finished;
-            NeighborsInfo[finishedMessage.From].HadConcert = true;
-            //zabezpieczenie, na wypadek gdyby w "WaitForNeighborsStatus" rozpoczeło się czekanie na semaforze
-            //gdyby nie zostało zwolnienie semafora nastąpiłby deadlock
-            NeighborsInfo[finishedMessage.From].StatusRecived();
+            NeighborsInfo[From].Status = Jankiel.ElectionStatus.Finished;
+            NeighborsInfo[From].HadConcert = true;
+            ////zabezpieczenie, na wypadek gdyby w "WaitForNeighborsStatus" rozpoczeło się czekanie na semaforze
+            ////gdyby nie zostało zwolnienie semafora nastąpiłby deadlock
+            //NeighborsInfo[finishedMessage.From].StatusRecived();
+        }
+
+        internal void WaitStartTour()
+        {
+            var neighborsToWaitFor = NeighborsInfo.Values.Where(n => !n.HadConcert).ToArray();
+            foreach (var n in neighborsToWaitFor)
+            {
+                n.WaitStartTour();
+            }
         }
 
         internal void ProcessVoteMessage(VoteMessage voteMessage)
@@ -119,16 +137,14 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
 
         internal void WaitForNeighborsStatus()
         {
-            //var neighborsToWait = NeighborsInfo.Values.Where(n => n.Status == Jankiel.ElectionStatus.None);
-            var neighborsToWait = NeighborsInfo.Values;
+            var neighborsToWait = NeighborsInfo.Values.Where(n=>!n.HadConcert);
             foreach (var n in neighborsToWait)
                 n.WaitStatus();
         }
 
         internal bool RecivedB()
         {
-            //var neighborsToWait = NeighborsInfo.Values.Where(n => n.Status == Jankiel.ElectionStatus.None);
-            var neighborsToWait = NeighborsInfo.Values;
+            var neighborsToWait = NeighborsInfo.Values.Where(n => !n.HadConcert);
             bool res = false;
             foreach (var n in neighborsToWait)
             {
@@ -142,7 +158,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         private void Client_ApplicationMessageReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
             var msg = Message.GetMessage(e.ApplicationMessage.Payload);
-            Console.WriteLine($"{jankiel.Name} : Otrzymał od  - {msg.From} - wiadomość - {msg.GetType()} -");
+            //Console.WriteLine($"{jankiel.Name} : Otrzymał od  - {msg.From} - wiadomość - {msg.GetType()} -");
             lock (syncMessageProcessing)
             {
                 msg.ProcessMessage(this);
