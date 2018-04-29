@@ -16,7 +16,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel.Messages
 
         public override void ProcessMessage(JankielManager jankiel)
         {
-            throw new NotImplementedException();
+            jankiel.ProcessElectionStatusMessage(this);
         }
     }
 }

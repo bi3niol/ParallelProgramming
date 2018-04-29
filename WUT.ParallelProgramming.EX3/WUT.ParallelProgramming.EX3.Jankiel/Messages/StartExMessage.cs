@@ -20,9 +20,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel.Messages
         }
         public override void ProcessMessage(JankielManager jankielManager)
         {
-            jankielManager.FirstMISForLength = (int)Math.Log(D);
-            jankielManager.SecondMISForLength = M * (int)Math.Log(n);
-            jankielManager.StartJankiel();
+            jankielManager.ProcessStartExMessage(this);
         }
     }
 }

@@ -19,21 +19,55 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             jankiel = j;
         }
 
+        internal void ProcessFinishedTourMessage(FinishedTourMessage finishedTourMessage)
+        {
+            NeighborsInfo[finishedTourMessage.From].FinishedTour();
+        }
+
+        private SemaphoreSlim unSubscribeSem = new SemaphoreSlim(0, 1);
+        internal void ProcessFinishedMessage(FinishedMessage finishedMessage)
+        {
+            client.UnsubscribeAsync(finishedMessage.From).ContinueWith(t=> { unSubscribeSem.Release(); });
+            unSubscribeSem.Wait();
+            NeighborsInfo[finishedMessage.From].Status = Jankiel.ElectionStatus.Finished;
+            NeighborsInfo[finishedMessage.From].HadConcert = true;
+            //zabezpieczenie, na wypadek gdyby w "WaitForNeighborsStatus" rozpoczeło się czekanie na semaforze
+            //gdyby nie zostało zwolnienie semafora nastąpiłby deadlock
+            NeighborsInfo[finishedMessage.From].StatusRecived();
+        }
+
+        internal void ProcessVoteMessage(VoteMessage voteMessage)
+        {
+            NeighborsInfo[voteMessage.From].VoteMessageRecived(voteMessage.VoteValue);
+        }
+
         public int FirstMISForLength { get; set; }
         public int SecondMISForLength { get; set; }
+
+        internal void ProcessElectionStatusMessage(ElectionStatusMessage electionStatusMessage)
+        {
+            NeighborsInfo[electionStatusMessage.From].Status = electionStatusMessage.Status;
+            NeighborsInfo[electionStatusMessage.From].StatusRecived();
+        }
+
+        internal void ProcessStartExMessage(StartExMessage startExMessage)
+        {
+            FirstMISForLength = (int)Math.Log(startExMessage.D);
+            SecondMISForLength = startExMessage.M * (int)Math.Log(startExMessage.n);
+            StartJankiel();
+        }
+
         public Dictionary<string, NeighborInfo> NeighborsInfo = new Dictionary<string, NeighborInfo>();
 
         private bool started = false;
-        private object startLock = new object();
         private Semaphore WaitForStartSem = new Semaphore(0, 1);
         public void StartJankiel()
         {
-            lock (startLock)
-                if (!started)
-                {
-                    started = true;
-                    WaitForStartSem.Release();
-                }
+            if (!started)
+            {
+                started = true;
+                WaitForStartSem.Release();
+            }
         }
 
         internal void WaitForStart()
@@ -49,6 +83,17 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                 .Build();
 
             await client.PublishAsync(mqMsg);
+        }
+
+        internal void WaitFinishTour()
+        {
+            var neighborsToWaitFor = NeighborsInfo.Values.Where(n => !n.HadConcert).ToArray();
+            foreach (var n in neighborsToWaitFor)
+            {
+                n.WaitFinishedTour();
+                n.ResetDataAfterTour();
+            }
+            
         }
 
         public void SetUpConnection(string name, string[] neighbors, string master)
@@ -72,21 +117,36 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             client.ConnectAsync(options);
         }
 
-        internal Task WaitForNeighborsStatus()
+        internal void WaitForNeighborsStatus()
         {
-            throw new NotImplementedException();
+            //var neighborsToWait = NeighborsInfo.Values.Where(n => n.Status == Jankiel.ElectionStatus.None);
+            var neighborsToWait = NeighborsInfo.Values;
+            foreach (var n in neighborsToWait)
+                n.WaitStatus();
         }
 
-        internal Task<bool> RecivedB()
+        internal bool RecivedB()
         {
-            throw new NotImplementedException();
+            //var neighborsToWait = NeighborsInfo.Values.Where(n => n.Status == Jankiel.ElectionStatus.None);
+            var neighborsToWait = NeighborsInfo.Values;
+            bool res = false;
+            foreach (var n in neighborsToWait)
+            {
+                if (n.SentB())
+                    res = true;
+            }
+            return res;
         }
 
+        private object syncMessageProcessing = new object();
         private void Client_ApplicationMessageReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
             var msg = Message.GetMessage(e.ApplicationMessage.Payload);
             Console.WriteLine($"{jankiel.Name} : Otrzymał od  - {msg.From} - wiadomość - {msg.GetType()} -");
-            msg.ProcessMessage(this);
+            lock (syncMessageProcessing)
+            {
+                msg.ProcessMessage(this);
+            }
         }
     }
 }

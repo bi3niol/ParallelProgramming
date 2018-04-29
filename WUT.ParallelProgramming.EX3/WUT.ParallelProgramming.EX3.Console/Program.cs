@@ -37,7 +37,7 @@ namespace WUT.ParallelProgramming.EX3.Console
             };
             Master.ConnectAsync(new MqttClientOptionsBuilder().WithTcpServer("localhost", 1884).Build());
 
-            var msg = new StartExMessage(D, 5, positions.GetLength(0)).GetBytes();
+            var msg = new StartExMessage(D*2, 5, positions.GetLength(0)).GetBytes();
             var mqMsg = new MqttApplicationMessageBuilder().WithTopic("Ex3Master").WithPayload(msg).Build();
             System.Console.WriteLine("enter by wysłac wiadomosc od mastera");
             System.Console.ReadLine();

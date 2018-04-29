@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 namespace WUT.ParallelProgramming.EX3.Jankiel.Messages
 {
     [Serializable]
-    public class VoteMessage : Message
+    public class FinishedMessage : Message
     {
-        public byte VoteValue { get; protected set; }
-        public VoteMessage(string from, byte voteValue) : base(from)
+        public FinishedMessage(string from) : base(from)
         {
-            VoteValue = voteValue;
         }
 
         public override void ProcessMessage(JankielManager jankiel)
         {
-            jankiel.ProcessVoteMessage(this);
+            jankiel.ProcessFinishedMessage(this);
         }
     }
 }
