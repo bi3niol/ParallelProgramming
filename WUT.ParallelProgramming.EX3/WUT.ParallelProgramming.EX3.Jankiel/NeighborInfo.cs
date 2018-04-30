@@ -18,7 +18,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         private SemaphoreSlim waitFinishedTourSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitStartTourSem = new SemaphoreSlim(0, int.MaxValue);
 
-        internal void StartArrivedTour()
+        internal void StartTourArrived()
         {
             waitStartTourSem.Release();
         }

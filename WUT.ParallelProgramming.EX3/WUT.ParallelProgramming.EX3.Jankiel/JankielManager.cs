@@ -14,6 +14,10 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
     {
         private IMqttClient client;
         private Jankiel jankiel;
+        public int FirstMISForLength { get; set; }
+        public int SecondMISForLength { get; set; }
+        public Dictionary<string, NeighborInfo> NeighborsInfo = new Dictionary<string, NeighborInfo>();
+
         public JankielManager(Jankiel j)
         {
             jankiel = j;
@@ -21,7 +25,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
 
         internal void ProcessStartTour(StartTourMessage startTourMessage)
         {
-            NeighborsInfo[startTourMessage.From].StartArrivedTour();
+            NeighborsInfo[startTourMessage.From].StartTourArrived();
         }
 
         internal void ProcessFinishedTourMessage(FinishedTourMessage finishedTourMessage)
@@ -40,11 +44,25 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             unSubscribeSem.Wait();
             NeighborsInfo[From].Status = Jankiel.ElectionStatus.Finished;
             NeighborsInfo[From].HadConcert = true;
-            ////zabezpieczenie, na wypadek gdyby w "WaitForNeighborsStatus" rozpoczeło się czekanie na semaforze
-            ////gdyby nie zostało zwolnienie semafora nastąpiłby deadlock
-            //NeighborsInfo[finishedMessage.From].StatusRecived();
         }
 
+        internal void ProcessVoteMessage(VoteMessage voteMessage)
+        {
+            NeighborsInfo[voteMessage.From].VoteMessageRecived(voteMessage.VoteValue);
+        }
+
+
+        internal void ProcessElectionStatusMessage(ElectionStatusMessage electionStatusMessage)
+        {
+            NeighborsInfo[electionStatusMessage.From].Status = electionStatusMessage.Status;
+            NeighborsInfo[electionStatusMessage.From].StatusRecived();
+        }
+        internal void ProcessStartExMessage(StartExMessage startExMessage)
+        {
+            FirstMISForLength = (int)Math.Log(startExMessage.D);
+            SecondMISForLength = startExMessage.M * (int)Math.Log(startExMessage.n);
+            StartJankiel();
+        }
         internal void WaitStartTour()
         {
             var neighborsToWaitFor = NeighborsInfo.Values.Where(n => !n.HadConcert).ToArray();
@@ -54,28 +72,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             }
         }
 
-        internal void ProcessVoteMessage(VoteMessage voteMessage)
-        {
-            NeighborsInfo[voteMessage.From].VoteMessageRecived(voteMessage.VoteValue);
-        }
-
-        public int FirstMISForLength { get; set; }
-        public int SecondMISForLength { get; set; }
-
-        internal void ProcessElectionStatusMessage(ElectionStatusMessage electionStatusMessage)
-        {
-            NeighborsInfo[electionStatusMessage.From].Status = electionStatusMessage.Status;
-            NeighborsInfo[electionStatusMessage.From].StatusRecived();
-        }
-
-        internal void ProcessStartExMessage(StartExMessage startExMessage)
-        {
-            FirstMISForLength = (int)Math.Log(startExMessage.D);
-            SecondMISForLength = startExMessage.M * (int)Math.Log(startExMessage.n);
-            StartJankiel();
-        }
-
-        public Dictionary<string, NeighborInfo> NeighborsInfo = new Dictionary<string, NeighborInfo>();
 
         private bool started = false;
         private Semaphore WaitForStartSem = new Semaphore(0, 1);
@@ -158,7 +154,8 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         private void Client_ApplicationMessageReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
         {
             var msg = Message.GetMessage(e.ApplicationMessage.Payload);
-            //Console.WriteLine($"{jankiel.Name} : Otrzymał od  - {msg.From} - wiadomość - {msg.GetType()} -");
+            //Console.WriteLine($"{jankiel.Name} : Otrzymał od  - {msg.From} - wiadomość - {msg} -");
+            //lock - by przetwarzac jedną wiadomosc w jednym czasie
             lock (syncMessageProcessing)
             {
                 msg.ProcessMessage(this);

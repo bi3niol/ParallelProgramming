@@ -49,32 +49,47 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             Console.WriteLine($"Jankiel {Name} skonczył {status} ...");
         }
 
-
+        /// <summary>
+        /// Realizacja algorytmu MIS (wybór zbioru niezależnego) 
+        /// </summary>
+        /// <returns>Status po zakonczeniu wyborów </returns>
         private async Task<ElectionStatus> MIS()
         {
             byte v;
             ElectionStatus status = ElectionStatus.None;
             for (int i = 0; i < jankielManager.FirstMISForLength; i++)
             {
-                double choosePropability = 1.0 / Math.Pow(2, jankielManager.FirstMISForLength - i);
+                double probabilityOfChoose = 1.0 / Math.Pow(2, jankielManager.FirstMISForLength - i);
                 for (int j = 0; j < jankielManager.SecondMISForLength; j++)
                 {
                     v = 0;
-                    if (random.NextDouble() < choosePropability)
+                    if (random.NextDouble() < probabilityOfChoose)
                         v = 1;
+                    //------Gwarancja że jesli ktos juz wie, że będzie grał------
+                    //to jego status się nie zmieni
                     if (status == ElectionStatus.Selected)
                         v = 1;
                     if (status == ElectionStatus.Lose)
                         v = 0;
+                    //---------------------------------------------------------
+                    // Wyslanie wiadomosci do sąsiadów z informacją o swoim "głosie" ( w wyborach )
                     await jankielManager.SendMsg(new VoteMessage(Name, v));
+
+                    // Czekanie na głosy sąsiadów, oraz sprawdzenie czy któryś z nich nie nie wysłał 1 w wiadomosci
                     bool isBRecived = jankielManager.RecivedB();
                     if (isBRecived)
                         v = 0;
 
+                    // nikt nikt z sąsiadów nie wysłał 1, oznacza to że bierzący proces został wybrany
                     if (v == 1)
                         status = ElectionStatus.Selected;
+                    //----------------------------------------------------------
+                    //druga wymiana wiadomosci
+                    // ponowne wysłanie v do sąsiadów by poinformować czy wartość v zmieniła się po otrzymaniu od nich wiadomosci 
                     await jankielManager.SendMsg(new VoteMessage(Name, v));
                     isBRecived = jankielManager.RecivedB();
+                    // jesli v jest 0 oraz otrzymalismy od jakiegos sąsiada 1 to proces ten przegrywa wybory w przeciwnym przypadku 
+                    //jesli v = 0 oraz nie otrzymalismy zadnej jedynki od sąsiadów status nadal jest nieznany
                     if (v == 0 && isBRecived)
                         status = ElectionStatus.Lose;
                     await jankielManager.SendMsg(new ElectionStatusMessage(status, Name));
