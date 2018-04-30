@@ -30,36 +30,23 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             Console.WriteLine($"Jankiel {Name} Czeka na start ...");
             jankielManager.WaitForStart();
             ElectionStatus status = ElectionStatus.None;
-            int i = 0;
-            //Dopoki nie bylismy wybrani to znaczy ze nie gralismy jeszcze koncertu
             while (status != ElectionStatus.Selected)
             {
-                //informacja dla sąsiadów o gotowosci do rozpączecia rundy
                 await jankielManager.SendMsg(new StartTourMessage(Name));
-                //oczekiwanie na potwierdzenie od swoich sąsiadów
                 jankielManager.WaitStartTour();
-
-                Console.WriteLine($"{Name} Start rundy {++i}");
-
-                //wybory ktory z jankieli będzie grał
+                Console.WriteLine($"Start rundy ");
                 status = await MIS();
-
-                Console.WriteLine($"Jankiel {Name} status : {status}");
                 if (status == ElectionStatus.Selected)
                 {
-                    //jankiel został wybrany wiec może grać
                     Console.WriteLine($"Jankiel {Name} gra koncert !");
                     Thread.Sleep(2000);
                 }
 
-                //informacja dla sąsiadów ze jankiel skonczył turę, wraz z informacją czy w tej turze grał koncert
-                // jesli tak to sąsiedzi w przyszył turach nie będą czekać na informacje pochodzące od tego jankiela
                 await jankielManager.SendMsg(new FinishedTourMessage(Name, status == ElectionStatus.Selected));
-                //czekanie na informacje od sąsiadów
                 jankielManager.WaitFinishTour();
-                Console.WriteLine($"{Name} koniec rundy {i}");
+                Console.WriteLine($"koniec rundy ");
             }
-            Console.WriteLine($"Jankiel {Name} skończył ...");
+            Console.WriteLine($"Jankiel {Name} skonczył {status} ...");
         }
 
         /// <summary>
