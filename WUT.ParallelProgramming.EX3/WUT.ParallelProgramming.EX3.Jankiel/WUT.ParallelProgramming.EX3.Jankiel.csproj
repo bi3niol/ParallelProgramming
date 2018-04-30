@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Jankiel.cs" />
     <Compile Include="JankielManager.cs" />
-    <Compile Include="Messages\ElectionStatusMessage.cs" />
     <Compile Include="Messages\FinishedMessage.cs" />
     <Compile Include="Messages\FinishedTourMessage.cs" />
     <Compile Include="Messages\Message.cs" />

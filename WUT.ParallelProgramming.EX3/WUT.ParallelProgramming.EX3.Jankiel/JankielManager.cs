@@ -51,12 +51,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             NeighborsInfo[voteMessage.From].VoteMessageRecived(voteMessage.VoteValue);
         }
 
-
-        internal void ProcessElectionStatusMessage(ElectionStatusMessage electionStatusMessage)
-        {
-            NeighborsInfo[electionStatusMessage.From].Status = electionStatusMessage.Status;
-            NeighborsInfo[electionStatusMessage.From].StatusRecived();
-        }
         internal void ProcessStartExMessage(StartExMessage startExMessage)
         {
             FirstMISForLength = (int)Math.Log(startExMessage.D);
@@ -71,7 +65,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                 n.WaitStartTour();
             }
         }
-
 
         private bool started = false;
         private Semaphore WaitForStartSem = new Semaphore(0, 1);
@@ -129,13 +122,6 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                 }
             };
             client.ConnectAsync(options);
-        }
-
-        internal void WaitForNeighborsStatus()
-        {
-            var neighborsToWait = NeighborsInfo.Values.Where(n=>!n.HadConcert);
-            foreach (var n in neighborsToWait)
-                n.WaitStatus();
         }
 
         internal bool RecivedB()
