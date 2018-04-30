@@ -19,7 +19,17 @@ namespace WUT.ParallelProgramming.EX3.Console
         {
             server.Start();
 
+            if (args.Length == 0)
+            {
+                System.Console.WriteLine("podaj scieżkę do pliku z pozycjami cymbalistow...");
+                return;
+            }
+            System.Console.WriteLine("Gdy na konsoli się pojawią informacje typu");
+            System.Console.WriteLine("[jankiel1] subscribe [jankiel2]");
+            System.Console.WriteLine("Nalezy wcisnąć ENTER by wysłać wiadomość od 'Mastera'");
+            System.Console.WriteLine("poinformowania cymbalistów by rozpoczeli działanie");
             var positions = Helpers.GetPositions(args[0]);
+
             int D = 0;
             for (int i = 0; i < positions.GetLength(0); i++)
             {

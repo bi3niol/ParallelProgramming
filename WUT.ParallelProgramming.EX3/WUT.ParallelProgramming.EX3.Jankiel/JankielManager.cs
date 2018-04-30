@@ -36,10 +36,10 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             }
             NeighborsInfo[finishedTourMessage.From].FinishedTour();
         }
-
-        private SemaphoreSlim unSubscribeSem = new SemaphoreSlim(0, 1);
+        
         internal void ProcessFinishedMessage(string From)
         {
+            SemaphoreSlim unSubscribeSem = new SemaphoreSlim(0, 1);
             client.UnsubscribeAsync(From).ContinueWith(t=> { unSubscribeSem.Release(); });
             unSubscribeSem.Wait();
             NeighborsInfo[From].Status = Jankiel.ElectionStatus.Finished;
@@ -100,9 +100,16 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                 n.WaitFinishedTour();
                 n.ResetDataAfterTour();
             }
-            
         }
 
+        /// <summary>
+        /// ustawianie odpowiednich połączeni pomiedzy sąsiadami
+        /// </summary>
+        /// <param name="name">Nazwa cymbalisty</param>
+        /// <param name="neighbors">lista sąsiadów (w odległosci <=3m)</param>
+        /// <param name="master">Nazwa "mastera" wykorzystywane w celu czekania na jego informacje która powiadomi
+        /// wszystki o tym ze wszystkie połączenia zostały ustawione (wiadomosci typu "StartExMessage") 
+        /// </param>
         public void SetUpConnection(string name, string[] neighbors, string master)
         {
             client = new MqttFactory().CreateMqttClient();
@@ -113,12 +120,12 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
             client.Connected += async (s, e) =>
             {
                 await client.SubscribeAsync(new TopicFilterBuilder().WithTopic(master).Build());
-                Console.WriteLine($"{name} sub {master}");
+                Console.WriteLine($"{name} subscribe {master}");
                 foreach (var item in neighbors)
                 {
                     NeighborsInfo.Add(item, new NeighborInfo(item));
                     await client.SubscribeAsync(new TopicFilterBuilder().WithTopic(item).Build());
-                    Console.WriteLine($"{name} sub {item}");
+                    Console.WriteLine($"{name} subscribe {item}");
                 }
             };
             client.ConnectAsync(options);
