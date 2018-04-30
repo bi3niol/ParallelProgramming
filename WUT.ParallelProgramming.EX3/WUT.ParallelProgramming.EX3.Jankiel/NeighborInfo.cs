@@ -13,6 +13,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         public bool HadConcert { get; set; }
         public Jankiel.ElectionStatus Status { get; set; }
         public byte LastVote { get; set; }
+        private SemaphoreSlim waitStatusSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitVoteSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitFinishedTourSem = new SemaphoreSlim(0, int.MaxValue);
         private SemaphoreSlim waitStartTourSem = new SemaphoreSlim(0, int.MaxValue);
@@ -20,6 +21,11 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         internal void StartTourArrived()
         {
             waitStartTourSem.Release();
+        }
+
+        public void StatusRecived()
+        {
+            waitStatusSem.Release();
         }
 
         internal void FinishedTour()
@@ -31,6 +37,11 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         {
             NeighboarName = name;
             Status = Jankiel.ElectionStatus.None;
+        }
+
+        internal void WaitStatus()
+        {
+            waitStatusSem.Wait();
         }
 
         internal void VoteMessageRecived(byte Vote)

@@ -105,6 +105,8 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
                     //jesli v = 0 oraz nie otrzymalismy zadnej jedynki od sąsiadów status nadal jest nieznany
                     if (v == 0 && isBRecived)
                         status = ElectionStatus.Lose;
+                    await jankielManager.SendMsg(new ElectionStatusMessage(status, Name));
+                    jankielManager.WaitForNeighborsStatus();
                 }
             }
             return status;
