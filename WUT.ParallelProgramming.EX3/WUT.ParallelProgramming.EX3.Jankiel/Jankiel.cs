@@ -70,7 +70,7 @@ namespace WUT.ParallelProgramming.EX3.Jankiel
         {
             byte v;
             ElectionStatus status = ElectionStatus.None;
-            for (int i = 0; i < jankielManager.FirstMISForLength; i++)
+            for (int i = 0; i < jankielManager.FirstMISForLength*5; i++)
             {
                 double probabilityOfChoose = 1.0 / Math.Pow(2, jankielManager.FirstMISForLength - i);
                 for (int j = 0; j < jankielManager.SecondMISForLength; j++)

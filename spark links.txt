@@ -1,0 +1,1 @@
+https://www.quora.com/How-do-I-use-Spark-to-read-whole-directory-instead-of-a-single-file
