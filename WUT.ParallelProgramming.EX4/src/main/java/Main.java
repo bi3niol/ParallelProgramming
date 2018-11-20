@@ -62,6 +62,9 @@ public class Main {
             return set;
         });
         SSet S = sSets.reduce((a,b)->a.collect(b));
+
+        //jesli chcemmy zbior czestych slow
+        S.cutToFrequent();
         S.drawTopN(getN());
 
         sSets.foreach(s->{

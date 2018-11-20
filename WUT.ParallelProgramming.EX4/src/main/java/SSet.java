@@ -65,6 +65,15 @@ public class SSet {
         return size;
     }
 
+    public void cutToFrequent(){
+        Set<String> thisK = getWords();
+        long minElems= (long)(_wordsCount*_K/100);
+        for (String w:thisK) {
+            if(wordToS.get(w)<minElems){
+                wordToS.remove(w);
+            }
+        }
+    }
     public double size(){
         return getWords().size();
     }
